@@ -15,7 +15,6 @@ def wrap_txt(text):
     ))
 
 
-
 # --- connect to the database ---
 def connect_db():
     # Connect to reg.sqlite, throws exception on error.
@@ -70,7 +69,6 @@ def print_details(classid, days, start, end, bldg, room,
 
     for name in proflist:
         print(f"Professor: {name}")
-
 
 
 # -- helper function to get rows ---

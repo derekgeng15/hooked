@@ -3,25 +3,176 @@ import os
 import sys
 import socket
 import argparse
+import json
+import sqlite3
 
-def handle_client(sock):
+GENERIC_SERVER_ERROR = "A server error occurred. Please contact the system administrator."
+DB_PATH = "reg.sqlite"
+
+# --- connect to the database ---
+def connect_db():
+    # Connect to reg.sqlite, throws exception on error.
     try:
-        # open both while socket is alive
-        in_flo = sock.makefile(mode='r', encoding='utf-8', newline='\n')
-        out_flo = sock.makefile(mode='w', encoding='utf-8', newline='\n')
+        return sqlite3.connect("reg.sqlite")
+    except sqlite3.Error as DatabaseConnectionException:
+        print(f"{sys.argv[0]}: {DatabaseConnectionException}, unable to connect to database.", file=sys.stderr)
+        sys.exit(1)
 
+# --- handle client ---
+def handle_client(sock):
+    in_flo = sock.makefile(mode='r', encoding='utf-8', newline='\n')
+    out_flo = sock.makefile(mode='w', encoding='utf-8', newline='\n')
+
+    try:
         line = in_flo.readline()
         if line == "":
-            # client closed connection before sending
             return
-
         line = line.rstrip()
-        out_flo.write(line + "\n") 
+
+        # 1) parse request
+        req = json.loads(line)
+        cmd = req[0]
+
+        # 2) do work
+        if cmd == "get_overviews":
+            filters = req[1]
+            data = get_overviews_from_db(filters)
+            resp = [True, data]
+
+        elif cmd == "get_details":
+            classid = req[1]
+            details = get_details_from_db(classid)
+            resp = [True, details]
+
+        else:
+            resp = [False, "Invalid request."]
+
+        # 3) send response
+        out_flo.write(json.dumps(resp) + "\n")
+        out_flo.flush()
+
+    except (sqlite3.OperationalError, sqlite3.DatabaseError) as ex:
+        # DB missing/corrupt: log real error, send generic
+        print(f"regserverprelim.py: {ex}", file=sys.stderr)
+        out_flo.write(json.dumps([False, GENERIC_SERVER_ERROR]) + "\n                                                                          ")
+        out_flo.flush()
+
+    except ValueError as ex:
+        # Use this for “client request error” (like classid doesn’t exist)
+        out_flo.write(json.dumps([False, str(ex)]) + "\n")
         out_flo.flush()
 
     except Exception as ex:
+        # Anything else unexpected: log + generic
         print(f"regserverprelim.py: {ex}", file=sys.stderr)
+        try:
+            out_flo.write(json.dumps([False, GENERIC_SERVER_ERROR]) + "\n")
+            out_flo.flush()
+        except Exception:
+            pass
 
+# -- helper function to get overviews from database using sql ---
+def sql_cmds_overviews(cur, filters):
+    return
+
+# --- function to get class overviews from db ---
+def get_overviews_from_db(filters):
+    conn = connect_db()
+    try:
+        cur = conn.cursor()
+        return sql_cmds_details(cur, filters)
+    finally:
+        conn.close()
+
+
+# -- helper function to get details from database using sql ---
+def sql_cmds_details(cur, classid):
+
+    # --- check class maps to course ---
+    cur.execute(
+        "SELECT courseid FROM classes WHERE classid = ?;",
+        (classid,)
+        )
+    row = cur.fetchone()
+
+    if row is None:
+        print(f"{sys.argv[0]}: no class with classid {classid} exists", file=sys.stderr)
+
+    # --- obtain class data ---
+    cur.execute("""
+        SELECT classid, courseid, days, starttime, endtime, bldg, roomnum
+        FROM classes
+        WHERE classid = ?;
+    """, (classid,))
+    class_row = cur.fetchone()
+    (classid, courseid, days, start, end, bldg, room) = class_row
+
+    courseid = class_row[1]
+    
+    # --- obtain course info ---
+    cur.execute("""
+        SELECT courseid, area, title, descrip, prereqs
+        FROM courses
+        WHERE courseid = ?;
+    """, (courseid,))
+    course_row = cur.fetchone()
+    (_, area, title, descrip, prereqs) = course_row
+
+    # --- obtain prof list ---
+    cur.execute("""
+        SELECT profs.profname
+        FROM profs
+        JOIN coursesprofs
+        ON profs.profid = coursesprofs.profid
+        WHERE coursesprofs.courseid = ?
+        ORDER BY profs.profname;
+    """, (courseid,))
+    proflist = [name for (name,) in cur.fetchall()]
+
+    # --- obtain crosslisting names ---
+    cur.execute("""
+        SELECT dept, coursenum
+        FROM crosslistings
+        JOIN courses
+        ON courses.courseid = crosslistings.courseid
+        WHERE courses.courseid = ?
+        ORDER BY crosslistings.dept, crosslistings.coursenum;
+    """, (courseid,))
+    
+    deptcoursenums = [
+        {"dept": dept, "coursenum": coursenum}
+        for (dept, coursenum) in cur.fetchall()
+    ]
+
+    # --- build the full dictionary ---
+    details = {
+        "classid": classid,
+        "days": days,
+        "starttime": start,
+        "endtime": end,
+        "bldg": bldg,
+        "roomnum": room,
+        "courseid": courseid,
+        "deptcoursenums": deptcoursenums,
+        "area": area or "",
+        "title": title or "",
+        "descrip": descrip or "",
+        "prereqs": prereqs or "",
+        "profnames": proflist
+    }
+
+    return details
+
+# --- function to get class details from db ---
+def get_details_from_db(classid):
+    conn = connect_db()
+    try:
+        cur = conn.cursor()
+        return sql_cmds_details(cur, classid)
+    finally:
+        conn.close()
+
+# --- main function ---
 def main():
     parser = argparse.ArgumentParser(
         prog="regserver.py",
