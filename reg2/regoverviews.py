@@ -3,15 +3,6 @@ import sqlite3
 import sys
 import textwrap
 
-# --- connect to the database ---
-def connect_db():
-    # Connect to reg.sqlite, throws exception on error.
-    try:
-        return sqlite3.connect("reg.sqlite")
-    except sqlite3.Error as DatabaseConnectionException:
-        print(f"{sys.argv[0]}: {DatabaseConnectionException}", file=sys.stderr)
-        sys.exit(1) # database error
-
 # --- parse arguments ---
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -34,8 +25,6 @@ def escape_like(text):
     text = text.replace("%", "\\%")
     text = text.replace("_", "\\_")
     return text
-
-
 
 # --- build query based on args ---
 def build_query(args):

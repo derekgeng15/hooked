@@ -71,19 +71,77 @@ def handle_client(sock):
         except Exception:
             pass
 
-# -- helper function to get overviews from database using sql ---
-def sql_cmds_overviews(cur, filters):
-    return
+# -- escape ---
+def escape_like(text):
+    text = text.replace("\\", "\\\\")
+    text = text.replace("%", "\\%")
+    text = text.replace("_", "\\_")
+    return text
+
+# --- build query based on args ---
+def sql_cmds_overview(cur, filters):
+    cmd = """
+    SELECT classes.classid,
+           crosslistings.dept,
+           crosslistings.coursenum,
+           courses.area,
+           courses.title
+    FROM classes
+    JOIN courses
+      ON courses.courseid = classes.courseid
+    JOIN crosslistings
+      ON crosslistings.courseid = classes.courseid
+    """
+
+    conditions = []
+    params = []
+
+    if filters.dept:
+        conditions.append("LOWER(crosslistings.dept) LIKE ? ESCAPE '\\'")
+        params.append(f"%{escape_like(filters.dept)}%")
+
+    if filters.num:
+        conditions.append("LOWER(crosslistings.coursenum) LIKE ? ESCAPE '\\'")
+        params.append(f"%{escape_like(filters.num)}%")
+
+    if filters.area:
+        conditions.append("LOWER(courses.area) LIKE ? ESCAPE '\\'")
+        params.append(f"%{escape_like(filters.area)}%")
+
+    if filters.title:
+        conditions.append("LOWER(courses.title) LIKE ? ESCAPE '\\'")
+        params.append(f"%{escape_like(filters.title)}%")
+
+    if conditions:
+        cmd += " WHERE " + " AND ".join(conditions)
+
+    cmd += """
+    ORDER BY crosslistings.dept,
+             crosslistings.coursenum,
+             classes.classid
+    """
+
+    cur.execute(cmd, params)
+    rows = cur.fetchall()
+    result = []
+    for (classid, dept, num, area, title) in rows:
+        result.append({
+            "classid": classid,
+            "dept": dept,
+            "coursenum": num,
+            "area": area or "",
+            "title": title or ""
+        })
+    return result
 
 # --- function to get class overviews from db ---
 def get_overviews_from_db(filters):
     conn = connect_db()
     try:
         cur = conn.cursor()
-        return sql_cmds_details(cur, filters)
+        return sql_cmds_overview(cur, filters)
     finally:
         conn.close()
-
 
 # -- helper function to get details from database using sql ---
 def sql_cmds_details(cur, classid):
