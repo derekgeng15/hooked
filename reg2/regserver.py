@@ -1,11 +1,32 @@
 #!/usr/bin/env python3
-import os, sys
+import os, sys, time
 import socket, json, threading
 import argparse
 import sqlite3
 
 SERVER_ERROR_MESSAGE = "A server error occurred. Please contact the system administrator."
 
+# --- apply delays ---
+def apply_delays():
+    # I/O delay (sleep)
+    try:
+        io = int(os.environ.get("IODELAY", "0"))
+        if io > 0:
+            time.sleep(io)
+    except Exception:
+        pass
+
+    # CPU delay (busy loop)
+    try:
+        cd = int(os.environ.get("CDELAY", "0"))
+        if cd > 0:
+            end = time.process_time() + cd
+            while time.process_time() < end:
+                pass
+    except Exception:
+        pass
+
+    
 # --- connect to the database ---
 def connect_db():
     return sqlite3.connect("reg.sqlite")
@@ -25,6 +46,7 @@ def handle_client(sock):
 
             req = json.loads(line)
             cmd = req[0]
+            apply_delays()
 
             if cmd == "get_overviews":
                 data = get_overviews_from_db(req[1])

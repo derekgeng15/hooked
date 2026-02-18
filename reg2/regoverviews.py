@@ -23,13 +23,6 @@ def parse_args():
 
     return parser.parse_args()
 
-# --- escape ---
-def escape_like(text):
-    text = text.replace("\\", "\\\\")
-    text = text.replace("%", "\\%")
-    text = text.replace("_", "\\_")
-    return text
-
 # --- wrap text ---
 def wrap_text(text):
     return textwrap.fill(
@@ -40,19 +33,21 @@ def wrap_text(text):
         break_on_hyphens=False
     )
 
+# --- print overview ---
 def print_overview(rows):
     print("ClsId Dept CrsNum Area Title")
     print("----- ---- ------ ---- -----")
 
-    for (classid, dept, num, area, title) in rows:
-        row = '%5s %4s %6s %4s %s' % (
-            classid,
-            dept,
-            num,
-            area or '',
-            title
-        )
+    for d in rows:
+        classid = d["classid"]
+        dept = d["dept"]
+        num = d["coursenum"]
+        area = d["area"]
+        title = d["title"]
+
+        row = '%5s %4s %6s %4s %s' % (classid, dept, num, area or '', title)
         print(wrap_text(row))
+
 
 # --- request details ---
 def request_overviews(host, port, dept, num, area, title):

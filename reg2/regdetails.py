@@ -2,6 +2,7 @@ import argparse, textwrap
 import sys
 import socket, json
 
+
 # --- helper func to wrap text ---
 def wrap_txt(text):
     return "\n".join(textwrap.wrap(
