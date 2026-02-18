@@ -1,6 +1,7 @@
 Your full name and netid and your teammate's full name and netid.
 
-[Enter your reply here.]
+Derek Geng dg9202
+Eleanor Liu el8403
 
 A paragraph describing your contribution, and another paragraph
 describing your teammate's contribution. Please be thorough; we're
@@ -16,7 +17,7 @@ assignment solution: people from whom you received help." Write "None"
 to indicate that you received no help from other people other than
 the course instructors.
 
-[Enter your reply here.]
+None
 
 A description of the written sources of information other than the
 lecture material that you used while doing the assignment. Your
@@ -25,14 +26,14 @@ assignment solution: sources of information." Write "None" to indicate
 that you used no written sources of information other than the lecture
 material.
 
-[Enter your reply here.]
+None
 
 A description of the help that you received from generative AI while
 doing the assignment. Your description must consist of lines of the
 form "aspect of your assignment solution: generative AI engines used."
 Write "None" to indicate that you received no help from generative AI.
 
-[Enter your reply here.]
+None
 
 An indication of how much time you spent doing the assignment.
 
@@ -52,4 +53,8 @@ bugs.
 Your answer to the two questions provided in the assignment
 specification.
 
-[Enter your reply here.]
+1. With respect to I/O and compute delays, in a high-volume environment 
+under what circumstances is regserver.py better than regserverprelim.py?
+
+2. With respect to I/O and compute delays, in a high-volume environment 
+under what circumstances is regserver.py not better than regserverprelim.py?
