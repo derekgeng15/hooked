@@ -1,7 +1,6 @@
-import argparse
-import sqlite3
+import argparse, textwrap
 import sys
-import textwrap
+import socket, json
 
 # --- helper func to wrap text ---
 def wrap_txt(text):
@@ -21,13 +20,48 @@ def parse_args():
         prog="regdetails.py",
         description="Registrar application: show details about a class"
     )
-    parser.add_argument("classid", type=int,
-                        help="the id of the class whose details should be shown")
+    parser.add_argument("host", help="the computer on which the server is running")
+    parser.add_argument("port", type=int, help="the port at which the server is listening")
+    parser.add_argument("classid", type=int, help="the id of the class whose details should be shown")
     return parser.parse_args()
 
+# --- request details ---
+def request_details(host, port, classid):
+    req_obj = ["get_details", classid]
+    req_str = json.dumps(req_obj)
+
+    try:
+        with socket.create_connection((host, port)) as sock:
+            in_flo = sock.makefile(mode="r", encoding="utf-8", newline="\n")
+            out_flo = sock.makefile(mode="w", encoding="utf-8", newline="\n")
+
+            out_flo.write(req_str + "\n")
+            out_flo.flush()
+
+            resp_str = in_flo.readline()
+            if resp_str == "":
+                raise ConnectionError("server closed connection")
+
+            resp_str = resp_str.rstrip()
+            resp = json.loads(resp_str)
+            return resp[0], resp[1]
+
+
+    except OSError as ex:
+        print(f"{sys.argv[0]}: {ex}", file=sys.stderr)
+        sys.exit(1)
+
+
 # --- print details---
-def print_details(classid, days, start, end, bldg, room, 
-                  courseid, area, title, descrip, prereqs, proflist, crosslisting_names):
+def print_details(data):
+    
+    crosslisting_names = [f"{x['dept']} {x['coursenum']}" for x in data["deptcoursenums"]]
+
+    classid, days, start, end, bldg, room, courseid, area, title, descrip, prereqs, proflist = (
+        data["classid"], data["days"], data["starttime"], data["endtime"], data["bldg"], data["roomnum"],
+        data["courseid"], data["area"], data["title"], data["descrip"], data["prereqs"],
+        data["profnames"]
+    )
 
     print("-------------")
     print("Class Details")
@@ -61,96 +95,17 @@ def print_details(classid, days, start, end, bldg, room,
     for name in proflist:
         print(f"Professor: {name}")
 
-
-# -- helper function to get rows ---
-def fetch_data(cur, classid):
-    cur.execute("""
-        SELECT classid, courseid, days, starttime, endtime, bldg, roomnum
-        FROM classes
-        WHERE classid = ?;
-    """, (classid,))
-    class_row = cur.fetchone()
-
-    if class_row is None:
-        return None, None
-
-    courseid = class_row[1]
-
-    cur.execute("""
-        SELECT courseid, area, title, descrip, prereqs
-        FROM courses
-        WHERE courseid = ?;
-    """, (courseid,))
-    course_row = cur.fetchone()
-
-    cur.execute("""
-        SELECT profs.profname
-        FROM profs
-        JOIN coursesprofs
-        ON profs.profid = coursesprofs.profid
-        WHERE coursesprofs.courseid = ?
-        ORDER BY profs.profname;
-    """, (courseid,))
-    proflist = [name for (name,) in cur.fetchall()]
-
-    cur.execute("""
-        SELECT dept, coursenum
-        FROM crosslistings
-        JOIN courses
-        ON courses.courseid = crosslistings.courseid
-        WHERE courses.courseid = ?
-        ORDER BY crosslistings.dept, crosslistings.coursenum;
-    """, (courseid,))
-    crosslisting_names = [f"{dept} {coursenum}" for (dept, coursenum) in cur.fetchall()]
-
-    return class_row, course_row, proflist, crosslisting_names
-
-
-def get_courseID(args, cur):
-    cur.execute(
-        "SELECT courseid FROM classes WHERE classid = ?;",
-        (args.classid,)
-        )
-    row = cur.fetchone()
-
-    if row is None:
-        print(f"{sys.argv[0]}: no class with classid {args.classid} exists", file=sys.stderr)
-        sys.exit(1)
-
-    return row[0]
-
-# --- main function ---
-# When executed via a command that contains a valid classid, your regdetails.py must write to stdout the 
-# classid, courseid, days, starttime, endtime, bldg, roomnum, dept(s), coursenum(s), area, title, descrip, prereqs, 
-# and profname(s) for the class with the given classid. 
 def main():
     args = parse_args()
-    conn = connect_db()
-    cur = conn.cursor()
 
-    try:
-        # parse args
-        courseid = get_courseID(args, cur)
-        class_row, course_row, proflist, crosslisting_names = fetch_data(cur, args.classid)
+    success, data = request_details(args.host, args.port, args.classid)
 
-        # save variables
-        (classid, courseid, days, start, end, bldg, room) = class_row
-        (_, area, title, descrip, prereqs) = course_row
-
-        print_details(
-            classid, days, start, end, bldg, room,
-            courseid, area, title, descrip, prereqs, proflist, crosslisting_names
-        )
-
-    except sqlite3.Error as exc:
-        print(f"{sys.argv[0]}: {exc}", file=sys.stderr)
+    if not success:
+        print(f"{sys.argv[0]}: {data}", file=sys.stderr)
         sys.exit(1)
 
-    finally:
-        conn.close()
-    
-    sys.exit(2)
-
+    print_details(data)
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()

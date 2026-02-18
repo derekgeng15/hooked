@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-import os
-import sys
-import socket
+import os, sys
+import socket, json, threading
 import argparse
-import json
 import sqlite3
-import threading
 
 SERVER_ERROR_MESSAGE = "A server error occurred. Please contact the system administrator."
 
