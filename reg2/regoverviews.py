@@ -1,6 +1,6 @@
-import argparse, textwrap
 import sys
 import json, socket
+import argparse, textwrap
 
 # --- parse arguments ---
 def parse_args():
