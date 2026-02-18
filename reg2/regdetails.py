@@ -15,15 +15,6 @@ def wrap_txt(text):
     ))
 
 
-# --- connect to the database ---
-def connect_db():
-    # Connect to reg.sqlite, throws exception on error.
-    try:
-        return sqlite3.connect("reg.sqlite")
-    except sqlite3.Error as DatabaseConnectionException:
-        print(f"{sys.argv[0]}: {DatabaseConnectionException}, unable to connect to database.", file=sys.stderr)
-        sys.exit(1)
-
 # --- parse arguments ---
 def parse_args():
     parser = argparse.ArgumentParser(

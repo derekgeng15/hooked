@@ -5,69 +5,58 @@ import socket
 import argparse
 import json
 import sqlite3
+import threading
 
 SERVER_ERROR_MESSAGE = "A server error occurred. Please contact the system administrator."
 
 # --- connect to the database ---
 def connect_db():
-    # Connect to reg.sqlite, throws exception on error.
-    try:
-        return sqlite3.connect("reg.sqlite")
-    except sqlite3.Error as DatabaseConnectionException:
-        print(f"{sys.argv[0]}: {DatabaseConnectionException}, unable to connect to database.", file=sys.stderr)
+    return sqlite3.connect("reg.sqlite")
+
 
 # --- handle client ---
 def handle_client(sock):
-    in_flo = sock.makefile(mode='r', encoding='utf-8', newline='\n')
-    out_flo = sock.makefile(mode='w', encoding='utf-8', newline='\n')
+    with sock:
+        in_flo = sock.makefile(mode='r', encoding='utf-8', newline='\n')
+        out_flo = sock.makefile(mode='w', encoding='utf-8', newline='\n')
 
-    try:
-        line = in_flo.readline()
-        if line == "":
-            return
-        line = line.rstrip()
-
-        # 1) parse request
-        req = json.loads(line)
-        cmd = req[0]
-
-        # 2) do work
-        if cmd == "get_overviews":
-            filters = req[1]
-            data = get_overviews_from_db(filters)
-            resp = [True, data]
-
-        elif cmd == "get_details":
-            classid = req[1]
-            details = get_details_from_db(classid)
-            resp = [True, details]
-
-        else:
-            resp = [False, "Invalid request."]
-
-        # 3) send response
-        out_flo.write(json.dumps(resp) + "\n")
-        out_flo.flush()
-
-    except (sqlite3.OperationalError, sqlite3.DatabaseError) as ex:
-        # DB missing/corrupt: log real error, send generic
-        print(f"{sys.argv[0]}: {ex}", file=sys.stderr)
-        out_flo.write(json.dumps([False, SERVER_ERROR_MESSAGE]) + "\n")
-        out_flo.flush()
-
-    except ValueError as ex:
-        # Client-related error (e.g., classid does not exist)
-        out_flo.write(json.dumps([False, str(ex)]) + "\n")
-        out_flo.flush()
-
-    except Exception as ex:
-        # Unexpected server error: log real error, send generic
-        print(f"{sys.argv[0]}: {ex}", file=sys.stderr)
         try:
+            line = in_flo.readline()
+            if line == "":
+                return
+            line = line.rstrip()
+
+            req = json.loads(line)
+            cmd = req[0]
+
+            if cmd == "get_overviews":
+                data = get_overviews_from_db(req[1])
+                resp = [True, data]
+            elif cmd == "get_details":
+                details = get_details_from_db(req[1])
+                resp = [True, details]
+            else:
+                resp = [False, "Invalid request."]
+
+            out_flo.write(json.dumps(resp) + "\n")
+            out_flo.flush()
+
+        except (sqlite3.OperationalError, sqlite3.DatabaseError) as ex:
+            print(f"{sys.argv[0]}: {ex}", file=sys.stderr)
             out_flo.write(json.dumps([False, SERVER_ERROR_MESSAGE]) + "\n")
             out_flo.flush()
-        except Exception:
-            pass
+
+        except ValueError as ex:
+            out_flo.write(json.dumps([False, str(ex)]) + "\n")
+            out_flo.flush()
+
+        except Exception as ex:
+            print(f"{sys.argv[0]}: {ex}", file=sys.stderr)
+            try:
+                out_flo.write(json.dumps([False, SERVER_ERROR_MESSAGE]) + "\n")
+                out_flo.flush()
+            except Exception:
+                pass
 
 # -- escape ---
 def escape_like(text):
@@ -253,15 +242,15 @@ def main():
 
     except OSError as ex:
         print(f"{sys.argv[0]}: {ex}", file=sys.stderr)
+        sys.exit(1)
 
     while True:
         try:
-            sock, _client_addr = server_sock.accept()
-            with sock:
-                handle_client(sock)
+            sock, _ = server_sock.accept()
+            threading.Thread(target=handle_client, args=(sock,), daemon=True).start()
         except Exception as ex:
-            # never let server die
             print(f"{sys.argv[0]}: {ex}", file=sys.stderr)
+
 
 if __name__ == "__main__":
     main()
