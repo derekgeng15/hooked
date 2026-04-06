@@ -70,29 +70,35 @@ def auth_callback():
     email = user_info["email"]
     name = user_info.get("name", "")
     
-    # Insert user if not already in DB
-    sql_cmd(
-        """INSERT INTO users (email, username) 
-        VALUES (%s, %s) 
-        ON CONFLICT (email) DO NOTHING;""",
-        (email, email)
-    )
-    
-    # Get user_id from database
-    rows = sql_cmd(
-        "SELECT user_id FROM users WHERE email = %s",
-        (email,),
+    # Insert user if not already in DB; RETURNING tells us if it's a new user
+    inserted = sql_cmd(
+        """INSERT INTO users (email, username)
+        VALUES (%s, %s)
+        ON CONFLICT (email) DO NOTHING
+        RETURNING user_id;""",
+        (email, email),
         fetch=True
     )
-    
-    user_id = rows[0][0] if rows else None
-    
+    is_new_user = bool(inserted)
+
+    # If new, get user_id from RETURNING; otherwise fetch it
+    if is_new_user:
+        user_id = inserted[0][0]
+    else:
+        rows = sql_cmd(
+            "SELECT user_id FROM users WHERE email = %s",
+            (email,),
+            fetch=True
+        )
+        user_id = rows[0][0] if rows else None
+
     session["user"] = {
         "email": email,
         "name": name,
         "user_id": user_id,
     }
-    return redirect(f"{FRONTEND_URL}/swipe")
+    destination = "seedprefs" if is_new_user else "swipe"
+    return redirect(f"{FRONTEND_URL}/{destination}")
 
 # logs out by clearing the session, then redirects back to the frontend
 @app.route("/auth/logout")
@@ -345,11 +351,14 @@ def save_preferences():
     vec = init_weight_vector_from_prefs(genres)
     
     # save to DB
-    user_id = flask.session['user_id']
+    user_id = flask.session['user']['user_id']
 
     sql_cmd(
-        "UPDATE users SET weight_vector = %s WHERE user_id = %s",
-        (vec, user_id)
+        """INSERT INTO user_profiles (user_id, weight_vector, updated_at)
+           VALUES (%s, %s, NOW())
+           ON CONFLICT (user_id) DO UPDATE
+           SET weight_vector = EXCLUDED.weight_vector, updated_at = NOW()""",
+        (user_id, json.dumps(vec))
     )
 
     return flask.jsonify({'added weight vec to DB': True})
