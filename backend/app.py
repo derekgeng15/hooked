@@ -61,15 +61,17 @@ def login():
 def auth_callback():
     token = google.authorize_access_token()
     user_info = token.get("userinfo")
+    username = user_info["email"].split("@")[0]  # define it first!
     session["user"] = {
         "email": user_info["email"],
         "name": user_info.get("name", ""),
+        "picture": user_info.get("picture", ""),
     }
     sql_cmd(
         """INSERT INTO users (email, username) 
         VALUES (%s, %s) 
         ON CONFLICT (email) DO NOTHING;""",
-        (user_info["email"], user_info["email"])
+        (user_info["email"], username)
     )
     return redirect("http://localhost:3000/swipe")
 
@@ -84,9 +86,12 @@ def logout():
 def get_user():
     user = session.get("user")
     if user:
+        row = sql_cmd("SELECT username, user_id FROM users WHERE email = %s", [user["email"]], fetch=True)
+        if row:
+            user["username"] = row[0][0]
+            user["user_id"] = row[0][1]
         return jsonify(user)
     return jsonify(None), 401
-
 
 EPSILON = 0.15  # fraction of requests served randomly for exploration
 

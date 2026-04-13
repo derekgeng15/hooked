@@ -9,3 +9,6 @@ https://stackoverflow.com/questions/46000360/use-of-then-in-reactjs
 
 how to build user auth
 https://dev.to/velcruza/how-to-display-different-components-based-on-user-authentication-8o5
+
+pfp.. no auth sometmes doesnt work because HTMLIFrameElement
+https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/referrerPolicy

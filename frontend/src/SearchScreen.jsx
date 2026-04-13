@@ -46,9 +46,12 @@ function SearchScreen() {
     // obtain the credentials from cookie
     // src: https://dev.to/velcruza/how-to-display-different-components-based-on-user-authentication-8o5
     useEffect(() => {
-        fetch("http://localhost:5000/auth/user", { credentials: "include" })
+        fetch("/auth/user", { credentials: "include" })
             .then(res => res.json())
-            .then(data => setUser(data))
+            .then(data => {
+                setUser(data)
+                console.log(data) 
+            })
     }, [])
     
     return (
@@ -62,7 +65,7 @@ function SearchScreen() {
             </button>
 
             {user && <p style={{ color: '#debff7', fontWeight: 'bold', cursor: 'pointer' }} 
-                onClick={() => navigate('/profile')}>Welcome, {user.name}!</p>}
+                onClick={() => navigate('/profile')}>Welcome, {user.username}!</p>}
             
             </div>
             
