@@ -8,6 +8,7 @@
 import React from 'react'
 import {useCallback, useEffect, useState} from 'react'
 import { useNavigate} from 'react-router-dom'
+import './index.css'
 
 function SignUp(){
 
@@ -37,7 +38,7 @@ function SignUp(){
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
-                style={loginStyle}
+                className = 'input-box-1'
             />
 
             <input
@@ -45,18 +46,18 @@ function SignUp(){
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                style={loginStyle}
+                className = 'input-box-1'
             />
             
             <table>
-            <button style={backButtonStyle} onClick = { () => {
+            <button className = 'btn-1' onClick = { () => {
                 console.log("back button clicked! lets migrate to welcome page")
                 navigate('/')
             }}> 
                 Back 
             </button>
 
-            <button style={backButtonStyle} onClick = {() => {
+            <button className = 'btn-1' onClick = {() => {
                 navigate('/seedprefs')
                 console.log("acc created... we are going to seed our preferences")}
                 }> 
@@ -87,28 +88,7 @@ const screenStyle = {
     position: 'relative',
 }
 
-const backButtonStyle = {
-    padding: '15px 35px',
-    fontSize: '16px',
-    backgroundColor: '#debff7',
-    color: '#1d1133',
-    fontWeight: 'bold',
-    border: 'none',
-    borderRadius: '50px',
-    cursor: 'pointer',
-}
 
-const loginStyle = {
-    padding: '5px', 
-    borderRadius: '3px',
-    width: '300px',
-    fontSize: '16px',
-    backgroundColor: '#d9bfea',
-    color: '#1d1133',
-    fontWeight: 'bold',
-    border: 'none',
-    cursor: 'pointer',
-}
 
 
 export default SignUp

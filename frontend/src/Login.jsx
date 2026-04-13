@@ -6,6 +6,7 @@
 
 import {useCallback, useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
+import './index.css'
 
 function Login(){
 
@@ -50,10 +51,10 @@ function Login(){
     }, [handleKeyPress])
 
     return (
-        <div style={screenStyle}>
+        <div className = 'screen-style2'>
         <h1>Login to Account</h1>
 
-        <button style={buttonStyle} onClick={handleBackButton}>
+        <button className = 'btn-1' onClick={handleBackButton}>
             Back
         </button>
 
@@ -62,7 +63,7 @@ function Login(){
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
-            style={loginStyle}
+            className = 'input-box-1'
         />
 
         <input
@@ -70,62 +71,21 @@ function Login(){
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
-            style={loginStyle}
+            className = 'input-box-1'
         />
 
-        <button style={buttonStyle} onClick={() => handleDone(username, password)}>
+        <button className = 'btn-1' onClick={() => handleDone(username, password)}>
             Done
         </button>
 
-        <h2> Devs: Press space bar to bypass and go to swipe screen... </h2>
+        <button className = 'btn-1' onClick={() => handleDone(username, password)}>
+            Forgot Password
+        </button>
+
 
         </div>
     );
 }
 
-// --------------------------------- Styles --------------------------------
-const screenStyle = {
-    minHeight: '100vh',
-    backgroundColor: '#18171d',
-    backgroundImage: `
-        radial-gradient(circle at 20% 30%, rgba(178, 201, 221, 0.4) 0%, transparent 30%),
-        radial-gradient(circle at 80% 20%, rgba(214, 163, 226, 0.25) 0%, transparent 30%),
-        radial-gradient(circle at 85% 85%, rgba(167, 202, 224, 0.4) 0%, transparent 30%),
-        radial-gradient(circle at 15% 90%, rgba(190, 126, 194, 0.3) 0%, transparent 30%)
-    `,
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#debff7',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '20px',
-    position: 'relative',
-}
-
-const buttonStyle = {
-    padding: '15px 35px',
-    fontSize: '16px',
-    backgroundColor: '#debff7',
-    color: '#1d1133',
-    fontWeight: 'bold',
-    border: 'none',
-    borderRadius: '50px',
-    cursor: 'pointer',
-}
-
-const loginStyle = {
-    padding: '5px', 
-    borderRadius: '3px',
-    width: '300px',
-    fontSize: '16px',
-    backgroundColor: '#d9bfea',
-    color: '#1d1133',
-    fontWeight: 'bold',
-    border: 'none',
-    cursor: 'pointer',
-}
-
-
+// -------------------- EXPORT --------------------
 export default Login

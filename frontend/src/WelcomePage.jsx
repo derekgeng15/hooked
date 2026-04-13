@@ -10,6 +10,7 @@ import { useNavigate} from 'react-router-dom'
 import Circle from "./AnimatedCircle.jsx"
 import musicNote1 from './musical-note-1.png'
 import musicNote2 from './musical-note-2.png'
+import './index.css'
 
 function WelcomePage(){
     // this makes it go from one screen to another
@@ -49,7 +50,7 @@ function WelcomePage(){
 
     
     return(
-        <div style={screenStyle} >
+        <div className = 'screen-style2' >
             <h1> Hooked </h1>
             <div> Reel in Your Next Playlist </div>
                 {/* teleports to either login or signup*/}
@@ -64,15 +65,15 @@ function WelcomePage(){
                     <Circle image={musicNote2}/>
                     <Circle image={musicNote2}/>
 
-                    <button style={loginButtonStyle} onClick={(handleLoginClick)}>
+                    <button className = 'btn-1' onClick={(handleLoginClick)}>
                         Login
                     </button>
 
-                    <button style={signupButtonStyle} onClick={(handleCreateClick)}> 
+                    <button className = 'btn-1' onClick={(handleCreateClick)}> 
                         Sign Up
                     </button>
 
-                    <button style={loginButtonStyle} onClick={handleGoogleClick}>
+                    <button className = 'btn-1' onClick={handleGoogleClick}>
                         Continue with Google
                     </button>
 
@@ -82,48 +83,5 @@ function WelcomePage(){
     )
 }
 
-// --------------------------------- Styles --------------------------------
-
-const screenStyle = {
-    minHeight: '100vh',
-    backgroundColor: '#18171d',
-    backgroundImage: `
-        radial-gradient(circle at 20% 30%, rgba(158, 123, 255, 0.4) 0%, transparent 30%),
-        radial-gradient(circle at 80% 20%, rgba(68, 161, 178, 0.25) 0%, transparent 30%),
-        radial-gradient(circle at 85% 85%, rgba(219, 100, 165, 0.4) 0%, transparent 30%),
-        radial-gradient(circle at 15% 90%, rgba(126, 169, 194, 0.3) 0%, transparent 30%)
-    `,
-    color: '#debff7',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '20px',
-    position: 'relative',
-}
-
-const loginButtonStyle = {
-    padding: '15px 35px',
-    fontSize: '16px',
-    backgroundColor: '#debff7',
-    color: '#1d1133',
-    fontWeight: 'bold',
-    border: 'none',
-    borderRadius: '50px',
-    cursor: 'pointer',
-}
-
-
-const signupButtonStyle = {
-    padding: '15px 35px',
-    fontSize: '16px',
-    backgroundColor: '#debff7',
-    color: '#1d1133',
-    fontWeight: 'bold',
-    border: 'none',
-    borderRadius: '50px',
-    cursor: 'pointer',
-}
-
-
+// -------------------- EXPORT --------------------
 export default WelcomePage

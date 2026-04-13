@@ -12,6 +12,7 @@ import SignUp from './SignUp'
 import Login from './Login'
 import LikedSongs from './LikedSongs'
 import SeedPreferences from './SeedPreferences'
+import Friends from './Friends'
 
 function App() {
     return (
@@ -24,9 +25,11 @@ function App() {
                 <Route path="/search" element={<SearchScreen />} />
                 <Route path="/liked" element={<LikedSongs />} />
                 <Route path="/seedprefs" element={<SeedPreferences />} />
+                <Route path="/friends" element={<Friends />} />
             </Routes>
         </BrowserRouter>
     )
 }
 
+// -------------------- EXPORT --------------------
 export default App
