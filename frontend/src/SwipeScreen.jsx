@@ -42,6 +42,7 @@ function SwipeScreen() {
     // message shows like or dislike after swiping
     const [message, setMessage] = useState("")
 
+
     // ------------------ Song Fetching ----------------------------------
 
     // send user like/dislike action to database, then fetch next song
@@ -78,6 +79,13 @@ function SwipeScreen() {
                 setCurrentSong(null)
                 setMessage("Server Error")
             })
+    }
+
+    // function to logout 
+    function handleLogout() {
+        window.location.href = "http://localhost:5000/auth/logout"
+        console.log("logged out")
+        navigate("/")
     }
 
     // initial load: fetch first song to start swipe session
@@ -180,6 +188,8 @@ function SwipeScreen() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentSong])
 
+    //
+    
     // --------------------- Swipe Screen Rendering ----------------------
 
     // main swipe UI
@@ -386,7 +396,7 @@ const cardRefStyle = {
     position: 'relative',
     width: '350px',
     padding: '100px 40px',
-    backgroundColor: '#7a779636',
+    backgroundColor: '#dfdcff2c',
     borderRadius: '25px',
     textAlign: 'center',
     color: 'white',

@@ -20,19 +20,21 @@ function Friends(){
 
     return (
         <div className='screen-style1'>
-        <h1>Friends</h1>
+            <div className='card'>
 
-        <input
-            type="text"
-            value={friendUsername}
-            onChange={(e) => setFriendUsername(e.target.value)}
-            placeholder="Search Friend"
-            className = 'input-box-1'
-        />
+            <h1>Friends</h1>
+            <input
+                type="text"
+                value={friendUsername}
+                onChange={(e) => setFriendUsername(e.target.value)}
+                placeholder="Search Friend Username"
+                className = 'input-box-1'
+            />
 
-        <button className = 'btn-1' onClick={handleBackButton}>
-            Back
-        </button>
+            <button className = 'btn-1' onClick={handleBackButton}>
+                Back
+            </button>
+            </div>
         </div>
     );
 }

@@ -5,7 +5,7 @@
 // Contributers: Lucille Rizo Patron
 // -----------------------------------------------------------------------
 
-import {useState, useRef} from 'react'
+import {useState, useRef, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import './index.css'
 
@@ -13,6 +13,7 @@ function SearchScreen() {
     const navigate = useNavigate()
     const [results, setResults] = useState([])
     const [query, setQuery] = useState("")
+    const [user, setUser] = useState(null)
     const controllerRef = useRef(null)
 
     function searchSong(my_params) {
@@ -41,13 +42,30 @@ function SearchScreen() {
                 }
             })
     }
+
+    // obtain the credentials from cookie
+    // src: https://dev.to/velcruza/how-to-display-different-components-based-on-user-authentication-8o5
+    useEffect(() => {
+        fetch("http://localhost:5000/auth/user", { credentials: "include" })
+            .then(res => res.json())
+            .then(data => setUser(data))
+    }, [])
     
     return (
         <div className = 'screen-style4'>
+            <div className="card">
+
+            <div className='card-header'>
             {/* back button */}
-            <button className = 'btn-2' onClick={() => navigate('/swipe')}>
-                ← Back to Main
+            <button className = 'back-btn' onClick={() => navigate('/swipe')}>
+                ← Back
             </button>
+
+            {user && <p style={{ color: '#debff7', fontWeight: 'bold', cursor: 'pointer' }} 
+                onClick={() => navigate('/profile')}>Welcome, {user.name}!</p>}
+            
+            </div>
+            
 
             {/* search bar */}
             <input
@@ -64,17 +82,20 @@ function SearchScreen() {
 
             {/* results */}
             {results.length > 0 ? (
-                results.map(song => (
-                    <div key={song.song_id} className="search-song-box" onClick={() => navigate('/swipe', {state: {song}} )}>
-                        <img src={song.song_image_url} alt={song.song_name} className="song-img-box"/>
-                        <span>{song.song_name} - {song.artist_name ?? 'Unknown Artist'}</span>
-                    </div>
-                ))
+                <div className="results-list">
+                    {results.map(song => (
+                        <div key={song.song_id} className="search-song-box" onClick={() => navigate('/swipe', {state: {song}})}>
+                            <img src={song.song_image_url} alt={song.song_name} className="song-img-box"/>
+                            <span>{song.song_name} - {song.artist_name ?? 'Unknown Artist'}</span>
+                        </div>
+                    ))}
+                </div>
             ) : (
                 <div className='no-results'>
                     <p>No results found!</p>
                 </div>
             )}
+            </div>
         </div>
     )
 }

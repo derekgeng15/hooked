@@ -13,6 +13,7 @@ import Login from './Login'
 import LikedSongs from './LikedSongs'
 import SeedPreferences from './SeedPreferences'
 import Friends from './Friends'
+import Profile from './Profile'
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/liked" element={<LikedSongs />} />
                 <Route path="/seedprefs" element={<SeedPreferences />} />
                 <Route path="/friends" element={<Friends />} />
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </BrowserRouter>
     )
