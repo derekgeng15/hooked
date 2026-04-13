@@ -8,6 +8,9 @@
 import React from 'react'
 import {useCallback, useEffect, useState} from 'react'
 import { useNavigate} from 'react-router-dom'
+import Circle from "./AnimatedCircle.jsx"
+import musicNote1 from './musical-note-1.png'
+import musicNote2 from './musical-note-2.png'
 import './index.css'
 
 const GENRES = [
@@ -82,6 +85,13 @@ function SeedPreferences(){
                     Done
                 </button>
             </div>
+
+            <Circle image={musicNote1} alpha={0.015}/>            
+            <Circle image={musicNote1} alpha={0.015}/>
+            <Circle image={musicNote1} alpha={0.015}/>
+            <Circle image={musicNote2} alpha={0.015}/>
+            <Circle image={musicNote2} alpha={0.015}/>
+            <Circle image={musicNote2} alpha={0.015}/>
         </div>
     )
 }

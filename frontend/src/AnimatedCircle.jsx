@@ -20,7 +20,7 @@ export default class Circle extends Component {
             y: Math.random() * _height,
         };
 
-        this.r = 0.02 * (_width - _height);
+        this.r = (props.alpha ?? 0.02) * (_width - _height);
     }
     
     move() {

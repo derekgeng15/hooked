@@ -8,6 +8,11 @@ import {useCallback, useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import './index.css'
 
+//circles
+import Circle from "./AnimatedCircle.jsx"
+import musicNote1 from './musical-note-1.png'
+import musicNote2 from './musical-note-2.png'
+
 function Login(){
 
     // this makes it go from one screen to another
@@ -82,6 +87,12 @@ function Login(){
             Forgot Password
         </button>
 
+            <Circle image={musicNote1} alpha={0.015}/>            
+            <Circle image={musicNote1} alpha={0.015}/>
+            <Circle image={musicNote1} alpha={0.015}/>
+            <Circle image={musicNote2} alpha={0.015}/>
+            <Circle image={musicNote2} alpha={0.015}/>
+            <Circle image={musicNote2} alpha={0.015}/>
 
         </div>
     );
