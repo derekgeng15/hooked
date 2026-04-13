@@ -10,7 +10,6 @@ import {useState, useRef, useEffect} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import searchIcon from './search_button.png'
-
 // Renders the swipe screen interface based on user mouse and keyboard 
 // actions
 function SwipeScreen() {
@@ -93,6 +92,7 @@ function SwipeScreen() {
                 // arrived directly
                 fetchNextSong()
             }
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [])
 
     // -----------------------  Drag Swipe -------------------------------
@@ -159,6 +159,7 @@ function SwipeScreen() {
             window.removeEventListener('mousemove', handleMouseMove)
             window.removeEventListener('mouseup', handleMouseUp)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDragging, offsetX])
 
     // ------------------- Keyboard Swipe --------------------------------  
@@ -176,6 +177,7 @@ function SwipeScreen() {
         window.addEventListener('keydown', handleKeyPress)
         // clean up listeners
         return () => window.removeEventListener('keydown', handleKeyPress)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentSong])
 
     // --------------------- Swipe Screen Rendering ----------------------
@@ -192,6 +194,7 @@ function SwipeScreen() {
                 <img 
                     src={searchIcon} 
                     style={{ width: '30px', height: '30px' }} 
+                    alt = ''
                 />
             </button>
 

@@ -7,7 +7,9 @@
 import React from 'react'
 import {useCallback, useEffect} from 'react'
 import { useNavigate} from 'react-router-dom'
-import Circle from "./AnimatedCircle.jsx";
+import Circle from "./AnimatedCircle.jsx"
+import musicNote1 from './musical-note-1.png'
+import musicNote2 from './musical-note-2.png'
 
 function WelcomePage(){
     // this makes it go from one screen to another
@@ -52,15 +54,15 @@ function WelcomePage(){
             <div> Reel in Your Next Playlist </div>
                 {/* teleports to either login or signup*/}
 
-                    <Circle />
-                    <Circle />
-                    <Circle />
-                    <Circle />
-                    <Circle />
-                    <Circle />                    
-                    <Circle />
-                    <Circle />
-                    <Circle />
+                    <Circle image={musicNote1}/>
+                    <Circle image={musicNote1}/>
+                    <Circle image={musicNote1}/>
+                    <Circle image={musicNote1}/>
+                    <Circle image={musicNote2}/>
+                    <Circle image={musicNote2}/>                    
+                    <Circle image={musicNote2}/>
+                    <Circle image={musicNote2}/>
+                    <Circle image={musicNote2}/>
 
                     <button style={loginButtonStyle} onClick={(handleLoginClick)}>
                         Login

@@ -6,13 +6,15 @@
 // -----------------------------------------------------------------------
 
 import React from 'react'
-import {useCallback, useEffect} from 'react'
+import {useCallback, useEffect, useState} from 'react'
 import { useNavigate} from 'react-router-dom'
 
 function SignUp(){
 
     // this makes it go from one screen to another
     const navigate = useNavigate()
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
 
     const handleKeyPress = useCallback((e) => {
         if (e.key === ' ' || e.code === "Space") {
@@ -29,7 +31,24 @@ function SignUp(){
     return(
         <div style = {screenStyle}> 
             Create an Account <br />
+
+            <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Username"
+                style={loginStyle}
+            />
+
+            <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                style={loginStyle}
+            />
             
+            <table>
             <button style={backButtonStyle} onClick = { () => {
                 console.log("back button clicked! lets migrate to welcome page")
                 navigate('/')
@@ -39,10 +58,11 @@ function SignUp(){
 
             <button style={backButtonStyle} onClick = {() => {
                 navigate('/seedprefs')
-                console.log("we are going to seed our preferences")}
+                console.log("acc created... we are going to seed our preferences")}
                 }> 
-                Seed Preferences 
+                Create!
             </button>
+            </table>
         </div>
     )
 }
@@ -77,5 +97,18 @@ const backButtonStyle = {
     borderRadius: '50px',
     cursor: 'pointer',
 }
+
+const loginStyle = {
+    padding: '5px', 
+    borderRadius: '3px',
+    width: '300px',
+    fontSize: '16px',
+    backgroundColor: '#d9bfea',
+    color: '#1d1133',
+    fontWeight: 'bold',
+    border: 'none',
+    cursor: 'pointer',
+}
+
 
 export default SignUp

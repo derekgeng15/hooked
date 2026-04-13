@@ -4,7 +4,7 @@
 // Authors: Eleanor Liu
 // Contributers: Lucille Rizo Patron
 // -----------------------------------------------------------------------
-import React from 'react'
+
 import {useState, useRef} from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -65,7 +65,7 @@ function SearchScreen() {
             {results.length > 0 ? (
                 results.map(song => (
                     <div key={song.song_id} style={songBox} onClick={() => navigate('/swipe', {state: {song}} )}>
-                        <img src={song.song_image_url} alt={song.song_name} style={songImageBox} />
+                        <img src={song.song_image_url} alt={song.song_name} style={songImageBox}/>
                         <span>{song.song_name} - {song.artist_name ?? 'Unknown Artist'}</span>
                     </div>
                 ))

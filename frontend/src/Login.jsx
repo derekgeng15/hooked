@@ -14,10 +14,6 @@ function Login(){
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
-    function handleLogin() {
-        window.location.href = "http://localhost:5000/auth/login";
-    }
-
     function handleBackButton() {
         console.log("back button clicked, go back to welcome page")
         navigate('/')

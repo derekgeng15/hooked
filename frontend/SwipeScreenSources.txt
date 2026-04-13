@@ -63,3 +63,6 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/flex
 All other CSS style attributes (text, layout, visuals, interactions, etc):
 https://developer.mozilla.org/en-US/docs/Web/CSS/Reference
 
+
+How to disable eslint rules to ignore react hooks warning:
+https://stackoverflow.com/questions/65704653/how-do-i-configure-eslint-rules-to-ignore-react-hooks-exhaustive-deps-globally

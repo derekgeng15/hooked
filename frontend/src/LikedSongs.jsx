@@ -5,9 +5,8 @@
 // Contributors:
 // -----------------------------------------------------------------------
 
-import React from 'react'
-import {useState, useRef, useEffect} from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import {useState, useEffect} from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import searchIcon from './search_button.png'
 
@@ -55,6 +54,7 @@ function LikedSongs() {
                 <img 
                     src={searchIcon} 
                     style={{ width: '30px', height: '30px' }} 
+                    alt = ''
                 />
             </button>
 
@@ -77,6 +77,7 @@ function LikedSongs() {
                         {/* album art */}
                         <img src={song.song_image_url} 
                              style={artStyle}  
+                             alt = ''
                         />
                         {/* song info*/}
                         <div style={songInfoStyle}>
