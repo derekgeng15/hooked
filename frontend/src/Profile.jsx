@@ -78,7 +78,7 @@ function Profile(){
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 12px 12px' }}>
                 {likedSongs.length === 0
-                    ? <p style={{ color: '#444', fontSize: 13 }}>No liked songs yet!</p>
+                    ? <p style={{ color: '#e0e0e08e', fontSize: 13 }}>No liked songs yet!</p>
                     : likedSongs.map(song => (
                         <div key={song.song_id} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <img src={song.song_image_url} alt={song.song_name}

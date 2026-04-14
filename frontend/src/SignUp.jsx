@@ -21,6 +21,8 @@ function SignUp(){
     const navigate = useNavigate()
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [email, setEmail] = useState("")
+    const [profileImg, setProfileImg] = useState(null)
 
     const handleKeyPress = useCallback((e) => {
         if (e.key === ' ' || e.code === "Space") {
@@ -34,16 +36,46 @@ function SignUp(){
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [handleKeyPress])
 
+    function handleBackButton() {
+        console.log("back button clicked, go back to welcome page")
+        navigate(-1)
+    }
+
+    function handleDrop(e) {
+        e.preventDefault()
+        const file = e.dataTransfer.files[0]
+        if (file && file.type.startsWith('image/')) {
+            setProfileImg(URL.createObjectURL(file))
+        }
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault() // required, otherwise drop won't fire
+    }
+
     return(
         <div className='screen-style6'> 
-            Create an Account <br />
+        <div className = 'card'> 
+
+            <div className = 'small-header'> 
+            <h1> Create an Account </h1>
+            
+            </div>
+
+            <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                className = 'input-box-4'
+            />
 
             <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
-                className = 'input-box-1'
+                className = 'input-box-4'
             />
 
             <input
@@ -51,24 +83,48 @@ function SignUp(){
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className = 'input-box-1'
+                className = 'input-box-4'
             />
             
-            <table>
-            <button className = 'btn-1' onClick = { () => {
+            <div>
+
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    style={{
+                        border: '2px dashed #debff7',
+                        borderRadius: '12px',
+                        padding: '24px',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        color: '#debff7',
+                        marginTop: '12px',
+                        marginBottom: '12px',
+                        maxWidth: '200px',
+                    }}
+                >
+                    {profileImg
+                        ? <img src={profileImg} alt="profile" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover' }} />
+                        : <p>Drag & drop a profile photo here</p>
+                    }
+                </div>
+            </div>
+            
+            <button className = 'btn-2' onClick = { () => {
                 console.log("back button clicked! lets migrate to welcome page")
                 navigate('/')
             }}> 
-                Back 
+                ⬅ 
             </button>
 
-            <button className = 'btn-1' onClick = {() => {
+            <button className = 'btn-2' onClick = {() => {
                 navigate('/seedprefs')
                 console.log("acc created... we are going to seed our preferences")}
                 }> 
                 Create!
             </button>
-            </table>
+            </div>
 
             <Circle image={musicNote1} alpha={0.015}/>            
             <Circle image={musicNote1} alpha={0.015}/>
@@ -76,7 +132,8 @@ function SignUp(){
             <Circle image={musicNote2} alpha={0.015}/>
             <Circle image={musicNote2} alpha={0.015}/>
             <Circle image={musicNote2} alpha={0.015}/>
-            
+
+        </div>
         </div>
     )
 }

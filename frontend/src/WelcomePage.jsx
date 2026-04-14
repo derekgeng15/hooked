@@ -65,18 +65,17 @@ function WelcomePage(){
                     <Circle image={musicNote2}/>
                     <Circle image={musicNote2}/>
 
-                    <button className = 'btn-1' onClick={(handleLoginClick)}>
+                    <button className = 'btn-3' onClick={(handleLoginClick)}>
                         Login
                     </button>
 
-                    <button className = 'btn-1' onClick={(handleCreateClick)}> 
+                    <button className = 'btn-3' onClick={(handleCreateClick)}> 
                         Sign Up
                     </button>
 
-                    <button className = 'btn-1' onClick={handleGoogleClick}>
+                    <button className = 'btn-3' onClick={handleGoogleClick}>
                         Continue with Google
                     </button>
-
         </div>
         
         

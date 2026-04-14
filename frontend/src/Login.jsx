@@ -22,7 +22,7 @@ function Login(){
 
     function handleBackButton() {
         console.log("back button clicked, go back to welcome page")
-        navigate('/')
+        navigate(-1)
     }
 
     async function handleDone(myUsername, myPassword){
@@ -57,12 +57,18 @@ function Login(){
 
     return (
         <div className = 'screen-style2'>
-        <h1>Login to Account</h1>
 
-        <button className = 'btn-1' onClick={handleBackButton}>
-            Back
-        </button>
+        <div className = 'card'> 
 
+            <div className = 'small-header'> 
+                <h1>Login to Account</h1>
+
+                <button className = 'back-btn' onClick={handleBackButton}>
+                    ⬅
+                </button>
+            </div>
+
+        <div> 
         <input
             type="text"
             value={username}
@@ -79,11 +85,13 @@ function Login(){
             className = 'input-box-1'
         />
 
-        <button className = 'btn-1' onClick={() => handleDone(username, password)}>
+        </div>
+
+        <button className = 'btn-2' onClick={() => handleDone(username, password)}>
             Done
         </button>
 
-        <button className = 'btn-1' onClick={() => handleDone(username, password)}>
+        <button className = 'btn-2' onClick={() => handleDone(username, password)}>
             Forgot Password
         </button>
 
@@ -94,6 +102,7 @@ function Login(){
             <Circle image={musicNote2} alpha={0.015}/>
             <Circle image={musicNote2} alpha={0.015}/>
 
+        </div>
         </div>
     );
 }
